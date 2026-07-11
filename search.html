@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-heading">
+    <h1>Search Historical Records</h1>
+</section>
+
+<section class="search-grid">
+    <form class="search-box" method="get">
+        <label>Search by HN
+            <input name="hn" value="{{ hn }}">
+        </label>
+        <button type="submit">Search HN</button>
+    </form>
+    <form class="search-box" method="get">
+        <label>Search by Patient Name
+            <input name="name" value="{{ name }}">
+        </label>
+        <button type="submit">Search Name</button>
+    </form>
+</section>
+
+<section class="panel">
+    <h2>Results</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>HN</th>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Gender</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+                <tr>
+                    <td>{{ patient.hn }}</td>
+                    <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                    <td>{{ patient.date_of_birth }}</td>
+                    <td>{{ patient.gender }}</td>
+                    <td><a href="{{ url_for('patient_history', patient_id=patient.patient_id) }}">View AST History</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">No matching patients found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

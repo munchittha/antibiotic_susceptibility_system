@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-shell">
+    <h1>Add Patient</h1>
+    <form method="post">
+        <label>HN
+            <input name="hn" required>
+        </label>
+        <label>First Name
+            <input name="first_name" required>
+        </label>
+        <label>Last Name
+            <input name="last_name" required>
+        </label>
+        <fieldset class="date-parts">
+            <legend>Date of Birth</legend>
+            <label>Day
+                <input type="text" name="birth_day" inputmode="numeric" maxlength="2" placeholder="DD" required>
+            </label>
+            <label>Month
+                <input type="text" name="birth_month" inputmode="numeric" maxlength="2" placeholder="MM" required>
+            </label>
+            <label>Year
+                <input type="text" name="birth_year" inputmode="numeric" maxlength="4" placeholder="YYYY" required>
+            </label>
+        </fieldset>
+        <label>Gender
+            <select name="gender" required>
+                <option value="">Choose gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </label>
+        <button type="submit">Save and Next: Visit</button>
+    </form>
+</section>
+{% endblock %}

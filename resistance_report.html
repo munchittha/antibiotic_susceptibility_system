@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-heading">
+    <h1>Resistance Trend Report</h1>
+    <p>Counts of S, I, and R, plus resistance percentages by organism.</p>
+</section>
+
+<section class="panel">
+    <h2>Result Counts by Antibiotic</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Antibiotic</th>
+                <th>S</th>
+                <th>I</th>
+                <th>R</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for antibiotic, counts in antibiotic_counts.items()|sort %}
+                <tr>
+                    <td>{{ antibiotic }}</td>
+                    <td>{{ counts.S }}</td>
+                    <td>{{ counts.I }}</td>
+                    <td>{{ counts.R }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4">No susceptibility results recorded yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="panel">
+    <h2>Resistance Percentage by Organism</h2>
+    <div class="bar-chart">
+        {% for item in organism_chart %}
+            <div class="bar-row">
+                <div class="bar-label">{{ item.name }}</div>
+                <div class="bar-track">
+                    <div class="bar-fill" style="width: {{ item.percentage }}%;"></div>
+                </div>
+                <div class="bar-value">{{ "%.1f"|format(item.percentage) }}%</div>
+            </div>
+        {% else %}
+            <p>No organism data available.</p>
+        {% endfor %}
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Organism</th>
+                <th>Resistant (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for organism, percentage in organism_percentages.items()|sort %}
+                <tr>
+                    <td>{{ organism }}</td>
+                    <td>{{ "%.1f"|format(percentage) }}%</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="2">No organism data available.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="panel">
+    <h2>Top Resistant Antibiotics</h2>
+    <form class="inline-form" method="get">
+        <label>Organism
+            <select name="organism">
+                <option value="">Choose organism</option>
+                {% for organism in organisms %}
+                    <option value="{{ organism }}" {% if organism == selected_organism %}selected{% endif %}>{{ organism }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button type="submit">Generate</button>
+    </form>
+
+    {% if selected_organism %}
+        <h3>{{ selected_organism }}</h3>
+        <div class="bar-chart">
+            {% for item in top_antibiotics %}
+                <div class="bar-row">
+                    <div class="bar-label">{{ item.name }}</div>
+                    <div class="bar-track">
+                        <div class="bar-fill danger-fill" style="width: {{ item.percentage }}%;"></div>
+                    </div>
+                    <div class="bar-value">{{ "%.1f"|format(item.percentage) }}%</div>
+                </div>
+            {% else %}
+                <p>No results found for this organism.</p>
+            {% endfor %}
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Antibiotic</th>
+                    <th>Resistant (%)</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in top_antibiotics %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ "%.1f"|format(item.percentage) }}%</td>
+                        <td>{{ item.resistant }}/{{ item.total }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3">No results found for this organism.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</section>
+{% endblock %}

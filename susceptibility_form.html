@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-shell">
+    <h1>{% if edit_mode %}Edit Susceptibility Result{% else %}Record Susceptibility Result{% endif %}</h1>
+    {% if current_organism %}
+        <p class="form-note">Organism: {{ current_organism.organism_name }}</p>
+    {% endif %}
+    <form method="post">
+        <label>Reporter Name
+            <input name="reporter_name" value="{{ susceptibility.reporter.name if susceptibility else last_reporter_name or '' }}" required>
+        </label>
+        <label>Antibiotic Name
+            <input
+                id="antibiotic_name"
+                list="antibiotic_options"
+                name="antibiotic_name"
+                value="{{ susceptibility.antibiotic_name if susceptibility else '' }}"
+                placeholder="Type to search antibiotic"
+                required
+            >
+            <datalist id="antibiotic_options">
+                {% for antibiotic in antibiotic_options %}
+                    <option value="{{ antibiotic }}"></option>
+                {% endfor %}
+            </datalist>
+        </label>
+        <label>Result
+            <select id="result" name="result" required>
+                <option value="">Choose result</option>
+                <option value="S" {% if susceptibility and susceptibility.result == "S" %}selected{% endif %}>S</option>
+                <option value="I" {% if susceptibility and susceptibility.result == "I" %}selected{% endif %}>I</option>
+                <option value="R" {% if susceptibility and susceptibility.result == "R" %}selected{% endif %}>R</option>
+            </select>
+        </label>
+        <label>MIC Value
+            <input
+                id="mic_value"
+                list="mic_options"
+                name="mic_value"
+                value="{{ susceptibility.mic_value if susceptibility and susceptibility.mic_value else '' }}"
+                placeholder="Choose S/I/R first, then type MIC"
+                required
+            >
+            <datalist id="mic_options"></datalist>
+        </label>
+        <label>Report Date
+            <input type="date" name="report_date" value="{{ susceptibility.report_date if susceptibility else last_report_date or '' }}" required>
+        </label>
+        {% if edit_mode %}
+            <button type="submit">Save Changes</button>
+        {% else %}
+            <div class="button-row">
+                <button type="submit" name="next_action" value="add_another">Save and Add Another Antibiotic</button>
+                <button class="secondary-button" type="submit" name="next_action" value="finish">Save Result and Finish</button>
+            </div>
+        {% endif %}
+    </form>
+</section>
+
+<script>
+    const micOptionsByAntibiotic = {{ mic_options_by_antibiotic|tojson }};
+    const existingMicValue = {{ (susceptibility.mic_value if susceptibility and susceptibility.mic_value else '')|tojson }};
+    const antibioticInput = document.getElementById("antibiotic_name");
+    const resultSelect = document.getElementById("result");
+    const micInput = document.getElementById("mic_value");
+    const micOptions = document.getElementById("mic_options");
+
+    function refreshMicOptions() {
+        const antibioticName = antibioticInput.value;
+        const result = resultSelect.value;
+        const optionValues = (
+            micOptionsByAntibiotic[antibioticName] &&
+            micOptionsByAntibiotic[antibioticName][result]
+        ) || [];
+
+        micOptions.innerHTML = "";
+
+        optionValues.forEach((micValue) => {
+            const option = document.createElement("option");
+            option.value = micValue;
+            micOptions.appendChild(option);
+        });
+
+        if (existingMicValue && optionValues.includes(existingMicValue)) {
+            micInput.value = existingMicValue;
+        } else if (!optionValues.includes(micInput.value)) {
+            micInput.value = "";
+        }
+    }
+
+    antibioticInput.addEventListener("input", refreshMicOptions);
+    resultSelect.addEventListener("change", refreshMicOptions);
+    refreshMicOptions();
+</script>
+{% endblock %}

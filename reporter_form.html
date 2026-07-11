@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-shell">
+    <h1>Add Reporter</h1>
+    <form method="post">
+        <label>Staff ID
+            <input name="staff_id" required>
+        </label>
+        <label>Name
+            <input name="name" required>
+        </label>
+        <button type="submit">Save Reporter</button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-shell">
+    <h1>Add Specimen</h1>
+    <form method="post">
+        <label>Specimen Type
+            <input list="specimen_type_options" name="specimen_type" placeholder="Type to search specimen type" required>
+            <datalist id="specimen_type_options">
+                {% for specimen_type in specimen_types %}
+                    <option value="{{ specimen_type }}"></option>
+                {% endfor %}
+            </datalist>
+        </label>
+        <label>Collection Date and Time
+            <input type="datetime-local" name="collection_date_time" required>
+        </label>
+        <button type="submit">Save and Next: Organism</button>
+    </form>
+</section>
+{% endblock %}

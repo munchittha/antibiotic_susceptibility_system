@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-shell">
+    <h1>Add Organism</h1>
+    <p class="form-note">Specimen: {{ specimen_type }} · suggested organisms are shown first</p>
+    <form method="post">
+        <label>Organism List
+            <select id="organism_scope">
+                <option value="likely">Likely for this specimen</option>
+                <option value="all">All organisms</option>
+            </select>
+        </label>
+        <label>Gram Group
+            <select id="gram_group" required>
+                <option value="">Choose Gram group</option>
+                {% for group_name in likely_organisms_by_group %}
+                    <option value="{{ group_name }}">{{ group_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Organism Name
+            <input id="organism_name" list="organism_options" name="organism_name" placeholder="Type to search organism" required>
+            <datalist id="organism_options"></datalist>
+        </label>
+        <button type="submit">Save and Next: AST Result</button>
+    </form>
+</section>
+
+<script>
+    const likelyOrganismsByGroup = {{ likely_organisms_by_group|tojson }};
+    const allOrganismsByGroup = {{ all_organisms_by_group|tojson }};
+    const organismScopeSelect = document.getElementById("organism_scope");
+    const gramGroupSelect = document.getElementById("gram_group");
+    const organismInput = document.getElementById("organism_name");
+    const organismOptions = document.getElementById("organism_options");
+
+    function currentOrganismsByGroup() {
+        return organismScopeSelect.value === "all" ? allOrganismsByGroup : likelyOrganismsByGroup;
+    }
+
+    function refreshGramGroups() {
+        const organismsByGroup = currentOrganismsByGroup();
+        gramGroupSelect.innerHTML = '<option value="">Choose Gram group</option>';
+        organismInput.value = "";
+        organismOptions.innerHTML = "";
+
+        Object.keys(organismsByGroup).forEach((groupName) => {
+            const option = document.createElement("option");
+            option.value = groupName;
+            option.textContent = groupName;
+            gramGroupSelect.appendChild(option);
+        });
+    }
+
+    function refreshOrganisms() {
+        const organismsByGroup = currentOrganismsByGroup();
+        const organisms = organismsByGroup[gramGroupSelect.value] || [];
+        organismInput.value = "";
+        organismOptions.innerHTML = "";
+
+        organisms.forEach((organismName) => {
+            const option = document.createElement("option");
+            option.value = organismName;
+            organismOptions.appendChild(option);
+        });
+    }
+
+    organismScopeSelect.addEventListener("change", refreshGramGroups);
+    gramGroupSelect.addEventListener("change", refreshOrganisms);
+</script>
+{% endblock %}

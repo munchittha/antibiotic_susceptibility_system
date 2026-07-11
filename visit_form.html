@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-shell">
+    <h1>Add Visit</h1>
+    <form method="post">
+        <label>Patient HN
+            <input name="hn" value="{{ patient_hn or '' }}" required>
+        </label>
+        <label>Visit Date
+            <input type="date" name="visit_date" required>
+        </label>
+        <label>Ward
+            <input list="ward_options" name="ward" placeholder="Type to search ward" required>
+            <datalist id="ward_options">
+                {% for ward_name in ward_names %}
+                    <option value="{{ ward_name }}"></option>
+                {% endfor %}
+            </datalist>
+        </label>
+        <button type="submit">Save and Next: Specimen</button>
+    </form>
+</section>
+{% endblock %}

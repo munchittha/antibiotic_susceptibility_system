@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-heading">
+    <h1>Laboratory Dashboard</h1>
+    <p>Review recent results or start a new reporting workflow.</p>
+    <a class="button" href="{{ url_for('add_patient') }}">Start New Report</a>
+</section>
+
+<section class="stats-grid">
+    {% for label, value in stats.items() %}
+        <article class="stat-card">
+            <span>{{ label.replace("_", " ").title() }}</span>
+            <strong>{{ value }}</strong>
+        </article>
+    {% endfor %}
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Recent Susceptibility Results</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Patient HN</th>
+                <th>Organism</th>
+                <th>Antibiotic</th>
+                <th>Result</th>
+                <th>Report Date</th>
+                <th>Staff</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in recent_results %}
+                <tr>
+                    <td>{{ result.organism.specimen.visit.patient.hn }}</td>
+                    <td>{{ result.organism.organism_name }}</td>
+                    <td>{{ result.antibiotic_name }}</td>
+                    <td><span class="result result-{{ result.result }}">{{ result.result }}</span></td>
+                    <td>{{ result.report_date }}</td>
+                    <td>{{ result.reporter.name }}</td>
+                    <td><a href="{{ url_for('edit_susceptibility', sus_id=result.sus_id) }}">Edit</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="7">No susceptibility results recorded yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

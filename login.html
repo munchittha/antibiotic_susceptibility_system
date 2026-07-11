@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block body_class %}login-page{% endblock %}
+{% block content %}
+<section class="login-shell">
+    <div class="login-intro">
+        <div class="login-mark">AST</div>
+        <p class="login-kicker">Hospital Laboratory</p>
+        <h1>Antibiotic Susceptibility Reporting System</h1>
+        <p class="login-subtitle">Secure access for recording culture results, AST interpretation, and resistance trend review.</p>
+    </div>
+    <div class="login-panel">
+        <h2>System Access</h2>
+        <p>Enter your staff ID and PIN to continue.</p>
+        <form method="post">
+            <label>Staff ID
+                <input
+                    name="staff_id"
+                    autocomplete="username"
+                    required
+                    autofocus
+                >
+            </label>
+            <label>PIN
+                <input
+                    type="password"
+                    name="pin"
+                    inputmode="numeric"
+                    autocomplete="current-password"
+                    required
+                >
+            </label>
+            <button class="login-button" type="submit">Enter System</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-heading">
+    <h1>{{ patient.first_name }} {{ patient.last_name }}</h1>
+    <p>HN {{ patient.hn }} · DOB {{ patient.date_of_birth }} · {{ patient.gender }}</p>
+</section>
+
+{% for visit in visits %}
+    <section class="panel history">
+        <h2>Visit {{ visit.visit_id }} · {{ visit.visit_date }} · {{ visit.ward }}</h2>
+        {% for specimen in visit.specimens %}
+            <div class="history-block">
+                <h3>Specimen {{ specimen.specimen_id }} · {{ specimen.specimen_type }}</h3>
+                <p>Collected {{ specimen.collection_date_time }}</p>
+                {% for organism in specimen.organisms %}
+                    <table>
+                        <caption>{{ organism.organism_name }}</caption>
+                        <thead>
+                            <tr>
+                                <th>Antibiotic</th>
+                                <th>Result</th>
+                                <th>MIC</th>
+                                <th>Report Date</th>
+                                <th>Reporter</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in organism.susceptibilities %}
+                                <tr>
+                                    <td>{{ result.antibiotic_name }}</td>
+                                    <td><span class="result result-{{ result.result }}">{{ result.result }}</span></td>
+                                    <td>{{ result.mic_value or "-" }}</td>
+                                    <td>{{ result.report_date }}</td>
+                                    <td>{{ result.reporter.name }}</td>
+                                    <td><a href="{{ url_for('edit_susceptibility', sus_id=result.sus_id) }}">Edit</a></td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="6">No susceptibility results for this organism.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No organisms recorded for this specimen.</p>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No specimens recorded for this visit.</p>
+        {% endfor %}
+    </section>
+{% else %}
+    <section class="panel"><p>No visits recorded for this patient.</p></section>
+{% endfor %}
+{% endblock %}
